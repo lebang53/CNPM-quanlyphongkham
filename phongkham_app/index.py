@@ -1,5 +1,7 @@
-from phongkham_app import app
-from flask import render_template
+from flask_login import login_user, logout_user
+
+from phongkham_app import app, dao, login
+from flask import render_template, request, redirect, url_for, session
 
 
 @app.route("/")
@@ -7,14 +9,58 @@ def home():
     return render_template("index.html")
 
 
-@app.route("/register", methods=['get', 'post'])
-def user_register():
-    return render_template("register.html")
-
-
-@app.route("/login", methods=['get', 'post'])
+# dang nhap
+@app.route('/login', methods=['get', 'post'])
 def user_login():
-    return render_template("login.html")
+    err_msg = ''
+    if request.method.__eq__('POST'):
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        user = dao.check_login(username=username, password=password)
+
+        if user:
+            if user.user_role.name == 'ADMIN':
+                return redirect(url_for('admin'))
+            else:
+                login_user(user=user)
+                return redirect(url_for('home'))
+        else:
+            err_msg = 'Username or Password is Invalid'
+
+    return render_template('login.html', err_msg=err_msg)
+
+
+@login.user_loader
+def user_load(user_id):
+    return dao.get_user_by_id(user_id=user_id)
+
+
+# dang ky
+@app.route('/register', methods=['get', 'post'])
+def user_register():
+    err_msg = ' '
+    if request.method.__eq__('POST'):
+        name = request.form.get('name')
+        username = request.form.get('username')
+        password = request.form.get('password')
+        confirm = request.form.get('confirmpassword')
+        try:
+            if password.strip().__eq__(confirm.strip()):
+                dao.add_user(name=name, username=username, password=password)
+                return redirect(url_for('user_signin'))
+            else:
+                err_msg = 'Password not match'
+        except Exception as ex:
+            err_msg = 'Request Error ' + str(ex)
+    return render_template('register.html', err_msg=err_msg)
+
+
+# dang xuat
+@app.route('/logout-user')
+def user_logout():
+    logout_user()
+    return redirect(url_for('user_login'))
 
 
 if __name__ == "__main__":
