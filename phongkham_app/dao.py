@@ -33,6 +33,25 @@ def get_patients_list():
     return patients.all()
 
 
+def get_schedules_list():
+    schedules = Schedule.query
+    return schedules.all()
+
+
+def get_schedules_ids():
+    schedules_ids = Schedule.query
+    return schedules_ids.get('id')
+
+
+def get_schedules_by_id(schedule_id):
+    return Schedule.query.get(schedule_id)
+
+
+def get_appointments_by_schedule_id(schedule_id):
+    appointments = db.session.query(Appointment).filter_by(schedule_id=schedule_id).all()
+    return appointments
+
+
 def save_schedule(patients):
     schedule = Schedule(appointment_date=date.today(), appointments=patients)
     for patient in patients:

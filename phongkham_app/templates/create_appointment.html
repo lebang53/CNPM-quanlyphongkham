@@ -1,0 +1,70 @@
+{% extends 'layout/employee_layout.html' %}
+{% block title %} Y tá {% endblock %}
+
+{% block sidenav %}
+<div class="side-nav">
+          <div class="side-nav-inner">
+            <ul class="side-nav-menu scrollable">
+              <li class="nav-item dropdown open">
+                <a class="dropdown-toggle" href="javascript:void(0);">
+                  <span class="icon-holder">
+                    <i class="anticon anticon-dashboard"></i>
+                  </span>
+                  <span class="title"> Y tá </span>
+                  <span class="arrow">
+                    <i class="arrow-icon"></i>
+                  </span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href="{{url_for('nurse')}}">Tạo danh sách khám bệnh</a>
+                  </li>
+                  <li>
+                    <a href="{{url_for('nurse_create_appointment')}}">Tạo lịch hẹn</a>
+                  </li>
+                    <li>
+                    <a href="{{url_for('see_schedule')}}">Xem danh sách khám bệnh</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+{% endblock %}
+{% block content %}
+<form action="/nurse/create_appointment" method="post">
+    <div class="main-content">
+            <div class="card">
+              <div class="card-body">
+                <h4>Tạo lịch khám</h4>
+                  <div class="form-group col-md-6">
+                    <label for="patientName">Tên bệnh nhân</label>
+                    <input type="text" class="form-control" id="patientName" name="patientName" placeholder="Nhập tên bệnh nhân...">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="birthDate">Ngày sinh</label>
+                    <input type="date" class="form-control" id="birthDate" name="birthDate" placeholder="Nhập ngày sinh">
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="address">Địa chỉ</label>
+                        <input type="text" class="form-control" id="address" name="address" placeholder="Nhập địa chỉ bênh nhân...">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="sex">Giới tính</label>
+                        <select class="form-control" id="sex" name="sex">
+                            <option disabled selected value="">Chọn giới tính</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                        </select>
+                    </div>
+                </div>
+                  <div>
+                      <button type="submit" class="btn btn-primary">Tạo lịch hẹn</button>
+                  </div>
+
+              </div>
+            </div>
+    </div>
+</form>
+{% endblock %}
