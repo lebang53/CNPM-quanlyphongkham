@@ -1,16 +1,16 @@
 <!-- Navbar cho trạng thái đã đăng nhập -->
 {% if current_user.is_authenticated %}
     <nav class="navbar navbar-expand-lg bg-white navbar-light shadow-sm px-5 py-3 py-lg-0">
-        <a href="index.html" class="navbar-brand p-0">
-            <h1 class="m-0 text-primary">VipproClinic</h1>
+        <a href="{{url_for('home')}}" class="navbar-brand p-0">
+            <h1 class="m-0 text-primary" >VipproClinic</h1>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse">
             <div class="navbar-nav ms-auto py-0">
-                <a href="index.html" class="nav-item nav-link active">Trang chủ</a>
-                <a href="about.html" class="nav-item nav-link">Về chúng tôi</a>
+                <a href="{{url_for('home')}}" class="nav-item nav-link active">Trang chủ</a>
+                <a href="{{url_for('about')}}" class="nav-item nav-link">Về chúng tôi</a>
                 <a href="about.html" class="nav-item nav-link">Xem lịch khám</a>
                 <a href="service.html" class="nav-item nav-link">Bệnh án</a>
                 <div class="nav-item dropdown">
@@ -22,13 +22,13 @@
                 </div>
             </div>
             <button type="button" class="btn text-dark" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fa fa-search"></i></button>
-            <a href="appointment.html" class="btn btn-primary py-2 px-4 ms-3">Appointment</a>
+            <a href="{{url_for('create_appointment')}}" class="btn btn-primary py-2 px-4 ms-3">Đặt lịch khám</a>
         </div>
     </nav>
 {% else %}
 <!-- Navbar cho trạng thái chưa đăng nhập -->
 <nav class="navbar navbar-expand-lg bg-white navbar-light shadow-sm px-5 py-3 py-lg-0">
-        <a href="index.html" class="navbar-brand p-0">
+        <a href="{{url_for('home')}}" class="navbar-brand p-0">
             <h1 class="m-0 text-primary">VipproClinic</h1>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
@@ -37,21 +37,12 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto py-0">
                 <a href="{{url_for('home')}}" class="nav-item nav-link active">Trang chủ</a>
-                <a href="about.html" class="nav-item nav-link">Về chúng tôi</a>
+                <a href="{{url_for('about')}}" class="nav-item nav-link">Về chúng tôi</a>
                 <a href="{{url_for('user_login')}}" class="nav-item nav-link">Đăng nhập</a>
                 <a href="{{url_for('user_register')}}" class="nav-item nav-link">Đăng ký</a>
-<!--                <div class="nav-item dropdown">-->
-<!--                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>-->
-<!--                    <div class="dropdown-menu m-0">-->
-<!--                        <a href="price.html" class="dropdown-item">Pricing Plan</a>-->
-<!--                        <a href="team.html" class="dropdown-item">Our Dentist</a>-->
-<!--                        <a href="testimonial.html" class="dropdown-item">Testimonial</a>-->
-<!--                        <a href="appointment.html" class="dropdown-item">Appointment</a>-->
-<!--                    </div>-->
-<!--                </div>-->
             </div>
             <button type="button" class="btn text-dark" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fa fa-search"></i></button>
-            <a href="appointment.html" class="btn btn-primary py-2 px-4 ms-3">Appointment</a>
+            <a href="{{url_for('user_login')}}" class="btn btn-primary py-2 px-4 ms-3">Đặt lịch khám</a>
         </div>
     </nav>
 {% endif %}

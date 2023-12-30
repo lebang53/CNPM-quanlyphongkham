@@ -1,15 +1,31 @@
+from flask_mail import Mail, Message
+
 from phongkham_app.models import Appointment, Schedule, User, UserRoleEnum
-from phongkham_app import db, app
+from phongkham_app import db, app, mail
 from sqlalchemy import func, Column, Date
 from datetime import date
 import hashlib
 
 
-def save_appointment(patient_name, sex, birth_date):
-    appointment = Appointment(patient_name=patient_name, sex=sex, birth_date=birth_date)
+def save_appointment(patient_name, sex, birth_date, user):
+    appointment = Appointment(patient_name=patient_name, sex=sex, birth_date=birth_date, user=user)
     db.session.add(appointment)
     db.session.commit()
     return
+
+
+def send_email(patient_name, birth_date, sex, email):
+    msg = Message('Xác nhận đặt lịch khám', recipients=[email])
+    msg.body = f'Chào {patient_name},\n\nChúng tôi đã nhận được lịch khám của bạn' \
+               f'\n\nĐây là thông tin bạn đã cung cấp: Ngày sinh của bạn là {birth_date}.' \
+               f'\n\nGiới tính {sex}' \
+               f'\n\nCảm ơn bạn đã đặt lịch khám. '
+
+    try:
+        mail.send(msg)
+        print("Email đã được gửi thành công!")
+    except Exception as e:
+        print(f"Có lỗi khi gửi email: {str(e)}")
 
 
 def get_patients_list():

@@ -1,4 +1,5 @@
 from urllib.parse import quote
+from flask_mail import Mail
 
 database_name = 'clinicdb'
 database_password = 'Leb@ng532002'
@@ -8,3 +9,9 @@ SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:%s@localhost/%s?charset=utf8mb4'
 SQLALCHEMY_TRACK_MODIFICATIONS = True
 PRESCRIPTION = 'prescription'
 
+MAIL_SERVER = 'smtp.googlemail.com'
+MAIL_PORT = 587
+MAIL_USE_TLS = True
+MAIL_USERNAME = 'vipproclinic123@gmail.com'
+MAIL_PASSWORD = 'lclj aklx psrv lymk'
+MAIL_DEFAULT_SENDER = 'vipproclinic123@gmail.com'
