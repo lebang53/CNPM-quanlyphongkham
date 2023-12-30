@@ -26,7 +26,7 @@ def user_login():
         session["user_id"] = user.id
         if user:
             if user.user_role.name == 'ADMIN':
-                return redirect(url_for('admin'))
+                return redirect(url_for('admin_signin'))
             else:
                 login_user(user=user)
                 return redirect(url_for('home'))
@@ -34,16 +34,6 @@ def user_login():
             err_msg = 'Username or Password is Invalid'
 
     return render_template('login.html', err_msg=err_msg)
-
-
-@app.route('/admin', methods=['get', 'post'])
-def admin():
-    return render_template('/admin/index.html')
-
-
-@app.route('/medicine-stat', methods=['get', 'post'])
-def medicine_stat():
-    return render_template('/admin/medicine_stat.html')
 
 
 @login.user_loader
@@ -90,6 +80,19 @@ def create_appointment():
 
         dao.send_email(patient_name=patient_name, birth_date=birth_date, sex=sex, email=email)
     return render_template('appointment.html')
+
+
+@app.route('/login-admin', methods=['get', 'post'])
+def admin_signin():
+    if request.method.__eq__('POST'):
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        user = dao.check_login_admin(username=username, password=password, role=UserRoleEnum.ADMIN)
+
+        if user:
+            login_user(user=user)
+    return redirect('/admin')
 
 
 if __name__ == "__main__":

@@ -33,6 +33,18 @@ class MedicineView(AuthenticatedModelView):
     column_sortable_list = ['id', 'name', 'price']
 
 
+class MedicineCategoryView(AuthenticatedModelView):
+    column_display_pk = True
+    can_view_details = True
+    can_export = True
+
+
+class UserView(AuthenticatedModelView):
+    column_display_pk = True
+    can_view_details = True
+    can_export = True
+
+
 class LogoutView(BaseView):
     @expose('/')
     def index(self):
@@ -43,9 +55,9 @@ class LogoutView(BaseView):
         return current_user.is_authenticated
 
 
-admin = Admin(app=app, name="VIPPRO CLINIC - ADMINISTRATION", template_mode='bootstrap4')
-              # index_view=MyAdminView())
+admin = Admin(app=app, name="ADMINISTRATION", template_mode='bootstrap4',
+              index_view=MyAdminView())
 admin.add_view(MedicineView(Medicine, db.session))
-admin.add_view(AuthenticatedModelView(MedicineCategory, db.session))
-admin.add_view(AuthenticatedModelView(User, db.session))
+admin.add_view(MedicineCategoryView(MedicineCategory, db.session))
+admin.add_view(UserView(User, db.session))
 admin.add_view(LogoutView(name='Logout'))
