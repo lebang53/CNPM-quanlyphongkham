@@ -4,7 +4,9 @@ from phongkham_app.models import Appointment, Schedule, User, UserRoleEnum
 from phongkham_app import db, app, mail
 from sqlalchemy import func, Column, Date
 from datetime import date
+from sqlalchemy.orm import joinedload
 import hashlib
+from sqlalchemy.orm import aliased
 
 
 def save_appointment(patient_name, sex, birth_date, user):
@@ -47,6 +49,26 @@ def get_schedules_by_id(schedule_id):
     return Schedule.query.get(schedule_id)
 
 
+def get_appointment_by_user_id(user_id):
+    user = db.session.query(User).filter_by(id=user_id).first()
+    if user:
+        user_appointments = db.session.query(Appointment).filter_by(user=user.id).all()
+        return user_appointments
+    return None
+
+
+def get_appointments_and_schedules_by_user(user_id):
+    user_alias = aliased(User)
+    appointments_and_schedules = (
+        db.session.query(Appointment, Schedule)
+        .filter(Appointment.user == user_id)
+        .join(Schedule, Appointment.schedule_id == Schedule.id)
+        .join(user_alias, user_alias.id == user_id)
+        .all()
+    )
+    return appointments_and_schedules
+
+
 def get_appointments_by_schedule_id(schedule_id):
     appointments = db.session.query(Appointment).filter_by(schedule_id=schedule_id).all()
     return appointments
@@ -71,6 +93,11 @@ def add_user(name, username, password, **kwargs):
     user = User(name=name.strip(), username=username.strip(), password=password)
     db.session.add(user)
     db.session.commit()
+
+
+def is_username_exists(username):
+    user = User.query.filter_by(username=username).first()
+    return user is not None
 
 
 def check_login(username, password):

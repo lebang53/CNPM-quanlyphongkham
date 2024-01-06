@@ -3,13 +3,19 @@ from flask_admin import Admin, AdminIndexView, expose, BaseView
 from flask_admin.contrib.sqla import ModelView
 from phongkham_app.models import MedicineCategory, Medicine, User, UserRoleEnum
 from flask_login import current_user, logout_user
-from flask import redirect
+from flask import redirect, url_for
 
 
 class MyAdminView(AdminIndexView):
     @expose('/')
     def index(self):
         return self.render('admin/index.html')
+
+    def is_accessible(self):
+        if current_user.is_authenticated and current_user.user_role == UserRoleEnum.ADMIN:
+            return True
+        else:
+            return redirect(url_for('user_login'))
 
 
 class AuthenticatedModelView(ModelView):

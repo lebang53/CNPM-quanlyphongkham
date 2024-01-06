@@ -1,0 +1,66 @@
+{% extends 'layout/base.html'%}
+
+{% block title %} Bệnh án {% endblock %}
+
+{% block content %}
+<!-- Hero Start -->
+<div class="container-fluid bg-primary py-5 hero-header mb-5">
+    <div class="row py-3">
+        <div class="col-12 text-center">
+            <h1 class="display-3 text-white animated zoomIn">Bệnh án</h1>
+            <a class="h4 text-white" href="">Home</a>
+            <i class="far fa-circle text-white px-2"></i>
+            <a class="h4 text-white" href="">Bệnh án</a>
+        </div>
+    </div>
+</div>
+<!-- Hero End -->
+
+
+<!-- Appointment Start -->
+    <div class="container">
+        <div class="row gx-5">
+            <!-- Trong mẫu Jinja2 (user_appointments_and_schedules.html) -->
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Tên Bệnh Nhân</th>
+            <th scope="col">Giới Tính</th>
+            <th scope="col">Ngày Sinh</th>
+            <th scope="col">Ngày Hẹn</th>
+            <!-- Thêm các cột khác tùy thuộc vào cấu trúc của đối tượng Appointment và Schedule -->
+        </tr>
+    </thead>
+    <tbody>
+<!--        {% for appointment, schedule in appointments_and_schedules %}-->
+<!--            <tr>-->
+<!--                <td>{{ appointment.patient_name }}</td>-->
+<!--                <td>{{ appointment.sex }}</td>-->
+<!--                <td>{{ appointment.birth_date.strftime('%d/%m/%Y') }}</td>-->
+<!--                <td>{{ schedule.appointment_date.strftime('%d/%m/%Y') }}</td>-->
+<!--                &lt;!&ndash; Hiển thị thông tin khác tùy thuộc vào cấu trúc của đối tượng Appointment và Schedule &ndash;&gt;-->
+<!--            </tr>-->
+<!--        {% endfor %}-->
+    </tbody>
+</table>
+
+        </div>
+    </div>
+<!-- Appointment End -->
+<!-- Newsletter Start -->
+<div class="container-fluid position-relative pt-5 wow fadeInUp" data-wow-delay="0.1s" style="z-index: 1;">
+    <div class="container">
+        <div class="bg-primary p-5">
+            <form class="mx-auto" style="max-width: 600px;">
+                <div class="input-group">
+                    <input class="form-control border-white p-3" placeholder="Your Email" type="text">
+                    <button class="btn btn-dark px-4">Sign Up</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Newsletter End -->
+{% endblock %}
+{% block css %} {% endblock %}
+{% block js %} {% endblock %}

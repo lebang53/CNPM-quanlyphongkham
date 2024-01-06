@@ -1,0 +1,79 @@
+{% extends 'layout/employee_layout.html' %}
+{% block title %} Y tá {% endblock %}
+
+{% block sidenav %}
+<div class="side-nav">
+          <div class="side-nav-inner">
+            <ul class="side-nav-menu scrollable">
+              <li class="nav-item dropdown open">
+                <a class="dropdown-toggle" href="javascript:void(0);">
+                  <span class="icon-holder">
+                    <i class="anticon anticon-table"></i>
+                  </span>
+                  <span class="title"> Y tá </span>
+                  <span class="arrow">
+                    <i class="arrow-icon"></i>
+                  </span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href="{{url_for('nurse')}}">Tạo danh sách khám bệnh</a>
+                  </li>
+                  <li>
+                    <a href="{{url_for('nurse_create_appointment')}}">Tạo lịch hẹn</a>
+                  </li>
+                    <li>
+                    <a href="{{url_for('see_schedule')}}">Xem danh sách khám bệnh</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+{% endblock %}
+{% block content %}
+          <!-- Content Wrapper START -->
+          <div class="main-content">
+            <div class="card">
+              <div class="card-body">
+                <h4>Tạo danh sách khám bệnh</h4>
+                <div class="m-t-25">
+                  <table id="dataTable" class="table">
+                    <thead>
+                      <tr>
+                        <th>Id</th>
+                        <th>Tên bệnh nhân</th>
+                        <th>Giới tính</th>
+                        <th>Sinh nhật</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% if patients %}
+                      {% for p in patients %}
+                        <tr>
+                          <td>{{ p.id }}</td>
+                          <td>{{ p.patient_name }}</td>
+                          <td>{{ p.sex }}</td>
+                          <td>{{ p.birth_date }}</td>
+                        </tr>
+                      {% endfor %}
+                      {% endif %}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th>Id</th>
+                        <th>Tên bệnh nhân</th>
+                        <th>Giới tính</th>
+                        <th>Sinh nhật</th>
+                      </tr>
+                    </tfoot>
+                  </table>
+                  <div class="text-center">
+                        <a href="{{url_for('save_list')}}" class="btn btn-primary pl-5 pr-5">Tạo lịch khám</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Content Wrapper END -->
+{% endblock %}
