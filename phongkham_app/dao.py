@@ -1,6 +1,6 @@
 from flask_mail import Mail, Message
 
-from phongkham_app.models import Appointment, Schedule, User, UserRoleEnum
+from phongkham_app.models import Appointment, Schedule, User, UserRoleEnum, Checkup
 from phongkham_app import db, app, mail
 from sqlalchemy import func, Column, Date
 from datetime import date
@@ -72,6 +72,13 @@ def get_appointments_and_schedules_by_user(user_id):
 def get_appointments_by_schedule_id(schedule_id):
     appointments = db.session.query(Appointment).filter_by(schedule_id=schedule_id).all()
     return appointments
+
+
+def save_checkup(symptoms, predict, checkup_user, checkup_date):
+    checkup = Checkup(checkup_date=checkup_date, symptoms=symptoms, predict=predict, checkup_user=checkup_user)
+    db.session.add(checkup)
+    db.session.commit()
+    return
 
 
 def save_schedule(patients):

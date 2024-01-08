@@ -1,0 +1,67 @@
+{% extends 'layout/employee_layout.html' %}
+{% block title %} Bác sĩ {% endblock %}
+
+{% block sidenav %}
+<div class="side-nav">
+          <div class="side-nav-inner">
+            <ul class="side-nav-menu scrollable">
+              <li class="nav-item dropdown open">
+                <a class="dropdown-toggle" href="javascript:void(0);">
+                  <span class="icon-holder">
+                    <i class="anticon anticon-table"></i>
+                  </span>
+                  <span class="title"> Thu ngân </span>
+                  <span class="arrow">
+                    <i class="arrow-icon"></i>
+                  </span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href="{{url_for('cashier')}}">Lịch khám bệnh</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+{% endblock %}
+{% block content %}
+<form action="/doctor/create_checkup" method="post">
+    <div class="main-content">
+            <div class="card">
+              <div class="card-body">
+                <h4>Tạo hóa đơn</h4>
+                  {% if user %}
+                    <div class="form-group col-md-6">
+                        <label for="patientName">Tên bệnh nhân</label>
+                        <input type="text" class="form-control" id="patientName" name="patientName" value="{{user.name}}">
+                    </div>
+                  {% endif %}
+                <div class="form-group col-md-6">
+                    <label for="checkupDate">Ngày khám</label>
+                    <input type="date" class="form-control" id="checkupDate" name="checkupDate" placeholder="Nhập ngày khám">
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-5">
+                        <label for="symptoms">Tiền khám</label>
+                        <input type="text" class="form-control" id="symptoms" name="symptoms" value="100000">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="predict">Tiền thuốc</label>
+                        <input type="text" class="form-control" id="predict" name="predict">
+                    </div>
+
+                </div>
+                <div class="form-group col-md-6">
+                        <label for="patientName">Tổng tiền</label>
+                        <input type="text" class="form-control" id="total" name="total" value="">
+                </div>
+              </div>
+                <div>
+                      <button type="submit" class="btn btn-primary">Tạo phiếu khám</button>
+                  </div>
+            </div>
+    </div>
+</form>
+
+{% endblock %}

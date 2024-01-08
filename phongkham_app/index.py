@@ -34,9 +34,9 @@ def user_login():
             elif user.user_role.name == 'DOCTOR':
                 login_user(user=user)
                 return redirect(url_for('doctor'))
-            elif user.user_role.name == 'CASHER':
+            elif user.user_role.name == 'CASHIER':
                 login_user(user=user)
-                return redirect(url_for('casher'))
+                return redirect(url_for('cashier'))
             else:
                 login_user(user=user)
                 return redirect(url_for('home'))
@@ -205,9 +205,52 @@ def list_patient(schedule_id):
     return redirect(url_for('error_page'))
 
 
-@app.route('/casher/create_receipt')
-def casher():
-    return render_template('create_schedule.html')
+@app.route('/doctor/list_patient/create_checkup/<int:user_id>', methods=['GET', 'POST'])
+def create_checkup(user_id):
+    if current_user.is_authenticated and current_user.user_role.name == 'DOCTOR':
+        if request.method == 'POST':
+            symptoms = request.form['symptoms']
+            predict = request.form['predict']
+            checkup_date = request.form['checkupDate']
+            checkup_user = user_id
+            dao.save_checkup(symptoms=symptoms, predict=predict, checkup_user=checkup_user, checkup_date=checkup_date)
+        user = dao.get_user_by_id(user_id)
+        appointment = dao.get_appointments_by_schedule_id(user_id)
+        return render_template('doctor/create_checkup.html', user=user, appointment=appointment)
+
+    return redirect(url_for('error_page'))
+
+
+@app.route('/cashier')
+def cashier():
+    if current_user.is_authenticated and current_user.user_role.name == 'CASHIER':
+        schedules = dao.get_schedules_list()
+        return render_template('cashier/checkout.html', schedules=schedules)
+    return redirect(url_for('error_page'))
+
+
+@app.route('/cashier/list_checkout/<int:schedule_id>')
+def list_checkout(schedule_id):
+    if current_user.is_authenticated and current_user.user_role.name == 'CASHIER':
+        appointments = dao.get_appointments_by_schedule_id(schedule_id=schedule_id)
+        return render_template('cashier/list_checkout.html', appointments=appointments)
+
+    return redirect(url_for('error_page'))
+
+
+@app.route('/cashier/list_checkout/create_bill/<int:user_id>', methods=['GET', 'POST'])
+def create_bill(user_id):
+    if current_user.is_authenticated and current_user.user_role.name == 'CASHIER':
+        # if request.method == 'POST':
+        #     symptoms = request.form['symptoms']
+        #     predict = request.form['predict']
+        #     checkup_date = request.form['checkupDate']
+        #     checkup_user = user_id
+        #     dao.save_checkup(symptoms=symptoms, predict=predict, checkup_user=checkup_user, checkup_date=checkup_date)
+        user = dao.get_user_by_id(user_id)
+        return render_template('cashier/create_bill.html', user=user)
+
+    return redirect(url_for('error_page'))
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 {% extends 'layout/employee_layout.html' %}
-{% block title %} Y tá {% endblock %}
+{% block title %} Thu ngân {% endblock %}
 
 {% block sidenav %}
 <div class="side-nav">
@@ -10,20 +10,14 @@
                   <span class="icon-holder">
                     <i class="anticon anticon-table"></i>
                   </span>
-                  <span class="title"> Bác sĩ </span>
+                  <span class="title"> Thu ngân </span>
                   <span class="arrow">
                     <i class="arrow-icon"></i>
                   </span>
                 </a>
                 <ul class="dropdown-menu">
                   <li>
-                    <a href="{{url_for('doctor')}}">Lịch khám bệnh</a>
-                  </li>
-                  <li>
-                    <a href="{{url_for('doctor')}}">Xem thuốc</a>
-                  </li>
-                    <li>
-                    <a href="{{url_for('doctor')}}">Xem bệnh án của bệnh nhân</a>
+                    <a href="{{url_for('cashier')}}">Lịch khám bệnh</a>
                   </li>
                 </ul>
               </li>
@@ -57,7 +51,7 @@
                               <td>{{ a.birth_date }}</td>
                               <td>Địa chỉ</td>
                               <td>
-                                  <a href="{{ url_for('create_checkup', user_id=a.user) }}">Lập phiếu khám</a>
+                                  <a href="{{ url_for('create_bill',  user_id=a.user) }}">Thanh toán</a>
                               </td>
                             </tr>
                           {% endfor %}

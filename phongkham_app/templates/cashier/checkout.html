@@ -1,0 +1,67 @@
+{% extends 'layout/employee_layout.html' %}
+{% block title %} Thu ngân {% endblock %}
+
+{% block sidenav %}
+<div class="side-nav">
+          <div class="side-nav-inner">
+            <ul class="side-nav-menu scrollable">
+              <li class="nav-item dropdown open">
+                <a class="dropdown-toggle" href="javascript:void(0);">
+                  <span class="icon-holder">
+                    <i class="anticon anticon-table"></i>
+                  </span>
+                  <span class="title"> Thu ngân </span>
+                  <span class="arrow">
+                    <i class="arrow-icon"></i>
+                  </span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href="{{url_for('cashier')}}">Lịch khám bệnh</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+{% endblock %}
+{% block content %}
+          <!-- Content Wrapper START -->
+          <div class="main-content">
+            <div class="card">
+              <div class="card-body">
+                <h4>Lịch khám bệnh</h4>
+                <div class="m-t-25">
+                  <table id="dataTable" class="table">
+                    <thead>
+                      <tr>
+                        <th>Id</th>
+                        <th>Ngày khám bệnh</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% if schedules %}
+                      {% for s in schedules %}
+                        <tr>
+                          <td>{{ s.id }}</td>
+                          <td>{{ s.appointment_date }}</td>
+                          <td>
+                            <a href="{{ url_for('list_checkout', schedule_id=s.id) }}">Xem lịch</a>
+                          </td>
+                        </tr>
+                      {% endfor %}
+                      {% endif %}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th>Id</th>
+                        <th>Ngày khám bệnh</th>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Content Wrapper END -->
+{% endblock %}
