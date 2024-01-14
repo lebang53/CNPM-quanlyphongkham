@@ -33,34 +33,33 @@
           <div class="main-content">
             <div class="card">
               <div class="card-body">
-                <h4>Lịch khám bệnh</h4>
+                <h4>Danh sách khám bệnh</h4>
                 <div class="m-t-25">
                   <table id="dataTable" class="table">
                     <thead>
                       <tr>
-                        <th>Id</th>
-                        <th>Ngày khám bệnh</th>
+                        <th>Ngày khám</th>
+                        <th>Triệu chứng</th>
+                        <th>Chuẩn đoán</th>
+
                       </tr>
                     </thead>
                     <tbody>
-                      {% if schedules %}
-                      {% for s in schedules %}
-                        <tr>
-                          <td>{{ s.id }}</td>
-                          <td>{{ s.appointment_date }}</td>
-                          <td>
-                            <a href="{{ url_for('list_patient', schedule_id=s.id) }}">Xem danh sách</a>
-                          </td>
-                        </tr>
-                      {% endfor %}
-                      {% endif %}
+                          {% if checkup %}
+                          {% for c in checkup %}
+                            <tr>
+                              <td>{{ c.checkup_date }}</td>
+                              <td>{{ c.symptoms }}</td>
+                              <td>{{ c.predict }}</td>
+                            </tr>
+                          {% endfor %}
+                          {% endif %}
                     </tbody>
-                    <tfoot>
-                      <tr>
-                        <th>Id</th>
-                        <th>Ngày khám bệnh</th>
-                      </tr>
-                    </tfoot>
+                    <tr>
+                          <th>Ngày khám</th>
+                          <th>Triệu chứng</th>
+                          <th>Chuẩn đoán</th>
+                    </tr>
                   </table>
                 </div>
               </div>

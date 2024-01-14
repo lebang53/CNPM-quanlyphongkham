@@ -33,34 +33,41 @@
           <div class="main-content">
             <div class="card">
               <div class="card-body">
-                <h4>Lịch khám bệnh</h4>
+                <h4>Danh sách khám bệnh</h4>
                 <div class="m-t-25">
                   <table id="dataTable" class="table">
                     <thead>
                       <tr>
-                        <th>Id</th>
-                        <th>Ngày khám bệnh</th>
+                        <th>Tên thuốc</th>
+                        <th>Đơn vị</th>
+                        <th>Giá</th>
+                        <th>Kho</th>
+
                       </tr>
                     </thead>
                     <tbody>
-                      {% if schedules %}
-                      {% for s in schedules %}
+                          {% if medicine %}
+                          {% for m in medicine %}
+                            <tr>
+                              <td>{{ m.name }}</td>
+                              <td>{{ m.unit }}</td>
+                              <td>{{ m.price|int }}</td>
+                              {% if m.in_stock == True %}
+                                <td>Còn</td>
+                              {% else %}
+                                <td>Hết</td>
+                              {% endif %}
+
+                            </tr>
+                          {% endfor %}
+                          {% endif %}
+                        </tbody>
                         <tr>
-                          <td>{{ s.id }}</td>
-                          <td>{{ s.appointment_date }}</td>
-                          <td>
-                            <a href="{{ url_for('list_patient', schedule_id=s.id) }}">Xem danh sách</a>
-                          </td>
-                        </tr>
-                      {% endfor %}
-                      {% endif %}
-                    </tbody>
-                    <tfoot>
-                      <tr>
-                        <th>Id</th>
-                        <th>Ngày khám bệnh</th>
+                        <th>Tên thuốc</th>
+                        <th>Đơn vị</th>
+                        <th>Giá</th>
+                        <th>Kho</th>
                       </tr>
-                    </tfoot>
                   </table>
                 </div>
               </div>

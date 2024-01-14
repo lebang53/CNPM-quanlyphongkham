@@ -1,5 +1,5 @@
 {% extends 'layout/employee_layout.html' %}
-{% block title %} Y tá {% endblock %}
+{% block title %} Bác sĩ {% endblock %}
 
 {% block sidenav %}
 <div class="side-nav">
@@ -20,10 +20,7 @@
                     <a href="{{url_for('doctor')}}">Lịch khám bệnh</a>
                   </li>
                   <li>
-                    <a href="{{url_for('doctor')}}">Xem thuốc</a>
-                  </li>
-                    <li>
-                    <a href="{{url_for('doctor')}}">Xem bệnh án của bệnh nhân</a>
+                    <a href="{{url_for('list_medicine')}}">Xem thuốc</a>
                   </li>
                 </ul>
               </li>

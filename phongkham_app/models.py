@@ -32,6 +32,9 @@ class User(BaseModel, UserMixin):
     def __str__(self):
         return self.name
 
+    def get_prescriptions(self):
+        return Prescription.query.join(Checkup).filter(Checkup.checkup_user == self.id).all()
+
 
 class Medicine(BaseModel):
     name = Column(String(50), nullable=False)
@@ -85,12 +88,21 @@ class Checkup(BaseModel):
     predict = Column(String(100), nullable=False)
     checkup_user = Column(Integer, ForeignKey('user.id'))
     prescription = Column(Integer, ForeignKey('prescription.id'))
+    prescription_details = relationship('PrescriptionDetails', backref='prescription_details_checkup', lazy=False)
 
 
 class Prescription(BaseModel):
     details = relationship('PrescriptionDetails', backref='prescription_detail', lazy=True)
     checkup = relationship('Checkup', backref='prescription_checkup', lazy=True)
     receipt = Column(Integer, ForeignKey("receipt.id"))
+
+
+    @classmethod
+    def create_prescription(cls):
+        new_prescription = cls()
+        db.session.add(new_prescription)
+        db.session.commit()
+        return new_prescription
 
 
 class PrescriptionDetails(BaseModel):

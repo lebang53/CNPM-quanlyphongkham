@@ -1,8 +1,8 @@
-from functools import wraps
 from flask_login import login_user, logout_user, login_required
 from phongkham_app import app, dao, login
 from flask import render_template, request, redirect, url_for, session
 from phongkham_app.admin import *
+from phongkham_app.models import Prescription, User
 
 
 @app.route("/")
@@ -209,14 +209,49 @@ def list_patient(schedule_id):
 def create_checkup(user_id):
     if current_user.is_authenticated and current_user.user_role.name == 'DOCTOR':
         if request.method == 'POST':
-            symptoms = request.form['symptoms']
-            predict = request.form['predict']
-            checkup_date = request.form['checkupDate']
-            checkup_user = user_id
-            dao.save_checkup(symptoms=symptoms, predict=predict, checkup_user=checkup_user, checkup_date=checkup_date)
+            new_prescription = Prescription.create_prescription()
+            prescription_id = new_prescription.id
+
+            if new_prescription:
+                symptoms = request.form['symptoms']
+                predict = request.form['predict']
+                checkup_date = request.form['checkupDate']
+                checkup_user = user_id
+                prescription = prescription_id
+                new_checkup = dao.save_checkup(symptoms=symptoms, predict=predict, checkup_user=checkup_user,
+                                               checkup_date=checkup_date, prescription=prescription)
+
+                if new_checkup:
+                    checkup = new_checkup.id
+                    dose = request.form['dose']
+                    usage = request.form['usage']
+                    medicine_id = request.form['medicineName']
+                    prescription = prescription_id
+                    dao.save_prescription_details(dose=dose, usage=usage, checkup=checkup,
+                                                  medicine_id=medicine_id, prescription = prescription)
+
         user = dao.get_user_by_id(user_id)
         appointment = dao.get_appointments_by_schedule_id(user_id)
-        return render_template('doctor/create_checkup.html', user=user, appointment=appointment)
+        medicine = dao.get_medicine_list_in_stock()
+        return render_template('doctor/create_checkup.html', user=user, appointment=appointment, medicine=medicine)
+
+    return redirect(url_for('error_page'))
+
+
+@app.route('/doctor/list_medicine')
+def list_medicine():
+    if current_user.is_authenticated and current_user.user_role.name == 'DOCTOR':
+        medicine = dao.get_medicine_list()
+        return render_template('doctor/list_medicine.html', medicine=medicine)
+
+    return redirect(url_for('error_page'))
+
+
+@app.route('/doctor/list_patient/create_checkup/diagnosis_history/<int:user_id>')
+def diagnosis_history(user_id):
+    if current_user.is_authenticated and current_user.user_role.name == 'DOCTOR':
+        checkup = dao.get_checkup_by_user_id(user_id=user_id)
+        return render_template('doctor/diagnosis_history.html', checkup=checkup)
 
     return redirect(url_for('error_page'))
 
@@ -238,17 +273,29 @@ def list_checkout(schedule_id):
     return redirect(url_for('error_page'))
 
 
+@app.route('/cashier/list_checkout/list_prescription/<int:user_id>')
+def list_prescription(user_id):
+    if current_user.is_authenticated and current_user.user_role == UserRoleEnum.CASHIER:
+        user_instance = User.query.get(user_id)
+        prescriptions = user_instance.get_prescriptions()
+
+        return render_template('cashier/list_prescription.html', prescriptions=prescriptions)
+
+    return redirect(url_for('error_page'))
+
+
 @app.route('/cashier/list_checkout/create_bill/<int:user_id>', methods=['GET', 'POST'])
 def create_bill(user_id):
     if current_user.is_authenticated and current_user.user_role.name == 'CASHIER':
-        # if request.method == 'POST':
-        #     symptoms = request.form['symptoms']
-        #     predict = request.form['predict']
-        #     checkup_date = request.form['checkupDate']
-        #     checkup_user = user_id
-        #     dao.save_checkup(symptoms=symptoms, predict=predict, checkup_user=checkup_user, checkup_date=checkup_date)
+        if request.method == 'POST':
+            checkup_date = request.form['checkupDate']
+            checkup_fees = request.form['checkupFees']
+            medicine_fees = dao.calculate_total_medicine_fees(user_id=user_id)
+
+            dao.save_receipt(checkup_date=checkup_date, checkup_fees=checkup_fees, medicine_fees=medicine_fees)
         user = dao.get_user_by_id(user_id)
-        return render_template('cashier/create_bill.html', user=user)
+        user_medicine_fees = dao.calculate_total_medicine_fees(user_id=user_id)
+        return render_template('cashier/create_bill.html', user=user, user_medicine_fees=user_medicine_fees)
 
     return redirect(url_for('error_page'))
 

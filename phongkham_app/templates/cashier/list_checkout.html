@@ -51,7 +51,7 @@
                               <td>{{ a.birth_date }}</td>
                               <td>Địa chỉ</td>
                               <td>
-                                  <a href="{{ url_for('create_bill',  user_id=a.user) }}">Thanh toán</a>
+                                  <a href="{{ url_for('list_prescription',  user_id=a.user) }}">Thanh toán</a>
                               </td>
                             </tr>
                           {% endfor %}

@@ -1,10 +1,11 @@
 from flask_mail import Mail, Message
 
-from phongkham_app.models import Appointment, Schedule, User, UserRoleEnum, Checkup
+from phongkham_app.models import Appointment, Schedule, User, UserRoleEnum, Checkup, Medicine, PrescriptionDetails, \
+    Prescription, Receipt
 from phongkham_app import db, app, mail
 from sqlalchemy import func, Column, Date
 from datetime import date
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, contains_eager
 import hashlib
 from sqlalchemy.orm import aliased
 
@@ -74,11 +75,17 @@ def get_appointments_by_schedule_id(schedule_id):
     return appointments
 
 
-def save_checkup(symptoms, predict, checkup_user, checkup_date):
-    checkup = Checkup(checkup_date=checkup_date, symptoms=symptoms, predict=predict, checkup_user=checkup_user)
+def save_checkup(symptoms, predict, checkup_user, checkup_date, prescription):
+    checkup = Checkup(symptoms=symptoms, predict=predict, checkup_user=checkup_user,
+                      checkup_date=checkup_date, prescription=prescription)
     db.session.add(checkup)
-    db.session.commit()
-    return
+    try:
+        db.session.commit()
+        return checkup
+    except Exception as e:
+        db.session.rollback()
+        print(f"Lỗi khi lưu đợt khám: {e}")
+        return None
 
 
 def save_schedule(patients):
@@ -126,6 +133,65 @@ def check_login_admin(username, password, role=UserRoleEnum.PATIENT):
 
 def get_user_by_id(user_id):
     return User.query.get(user_id)
+
+
+def get_medicine_list_in_stock():
+    medicine = Medicine.query.filter(Medicine.in_stock.__eq__(True))
+    return medicine.all()
+
+
+def get_medicine_list():
+    medicine = Medicine.query
+    return medicine.all()
+
+
+def save_prescription_details(dose, usage, checkup, medicine_id, prescription):
+    prescription_details = PrescriptionDetails(dose=dose, usage=usage, checkup=checkup, medicine_id=medicine_id,
+                                               prescription=prescription)
+    db.session.add(prescription_details)
+    db.session.commit()
+    return
+
+
+def save_prescription():
+    prescription = Prescription()
+    db.session.add(prescription)
+    db.session.commit()
+    return
+
+
+def get_checkup_by_user_id(user_id):
+    user = db.session.query(User).filter_by(id=user_id).first()
+    if user:
+        user_checkup = db.session.query(Checkup).filter_by(checkup_user=user.id).all()
+        return user_checkup
+    return None
+
+
+def save_receipt(checkup_date, checkup_fees, medicine_fees):
+    receipt = Receipt(checkup_date=checkup_date, checkup_fees=checkup_fees, medicine_fees=medicine_fees)
+    db.session.add(receipt)
+    db.session.commit()
+    return
+
+
+# def calculate_total_medicine_fees(user_id):
+#     total_medicine_fees = db.session.query(func.sum(Medicine.price).label('total_fees'))\
+#         .join(PrescriptionDetails, Medicine.id == PrescriptionDetails.medicine_id)\
+#         .join(Checkup, PrescriptionDetails.checkup == Checkup.id)\
+#         .filter(Checkup.checkup_user == user_id).scalar()
+#
+#     return total_medicine_fees or 0.0
+
+
+def get_prescriptions_by_user_id(user_id):
+    prescriptions = Prescription.query\
+        .join(Checkup, Prescription.checkup)\
+        .filter(Checkup.checkup_user == user_id)\
+        .options(contains_eager(Prescription.details))\
+        .all()
+
+    return prescriptions
 
 
 if __name__ == "__main__":

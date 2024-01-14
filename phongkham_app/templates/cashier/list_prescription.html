@@ -1,5 +1,5 @@
 {% extends 'layout/employee_layout.html' %}
-{% block title %} Bác sĩ {% endblock %}
+{% block title %} Thu ngân {% endblock %}
 
 {% block sidenav %}
 <div class="side-nav">
@@ -10,17 +10,14 @@
                   <span class="icon-holder">
                     <i class="anticon anticon-table"></i>
                   </span>
-                  <span class="title"> Bác sĩ </span>
+                  <span class="title"> Thu ngân </span>
                   <span class="arrow">
                     <i class="arrow-icon"></i>
                   </span>
                 </a>
                 <ul class="dropdown-menu">
                   <li>
-                    <a href="{{url_for('doctor')}}">Lịch khám bệnh</a>
-                  </li>
-                  <li>
-                    <a href="{{url_for('list_medicine')}}">Xem thuốc</a>
+                    <a href="{{url_for('cashier')}}">Lịch khám bệnh</a>
                   </li>
                 </ul>
               </li>
@@ -33,34 +30,35 @@
           <div class="main-content">
             <div class="card">
               <div class="card-body">
-                <h4>Lịch khám bệnh</h4>
+                <h4>Danh sách khám bệnh</h4>
                 <div class="m-t-25">
                   <table id="dataTable" class="table">
                     <thead>
                       <tr>
                         <th>Id</th>
-                        <th>Ngày khám bệnh</th>
+                        <th>Receipt</th>
+                        <th>Thanh toán</th>
+
                       </tr>
                     </thead>
                     <tbody>
-                      {% if schedules %}
-                      {% for s in schedules %}
+                          {% if prescription %}
+                          {% for p in prescription %}
+                            <tr>
+                              <td>{{ p.id }}</td>
+                              <td></td>
+                              <td>
+                                  <a href="{{ url_for('create_bill',  user_id=a.user) }}">Thanh toán</a>
+                              </td>
+                            </tr>
+                          {% endfor %}
+                          {% endif %}
+                        </tbody>
                         <tr>
-                          <td>{{ s.id }}</td>
-                          <td>{{ s.appointment_date }}</td>
-                          <td>
-                            <a href="{{ url_for('list_patient', schedule_id=s.id) }}">Xem danh sách</a>
-                          </td>
-                        </tr>
-                      {% endfor %}
-                      {% endif %}
-                    </tbody>
-                    <tfoot>
-                      <tr>
                         <th>Id</th>
-                        <th>Ngày khám bệnh</th>
+                        <th>Receipt</th>
+                        <th>Thanh toán</th>
                       </tr>
-                    </tfoot>
                   </table>
                 </div>
               </div>

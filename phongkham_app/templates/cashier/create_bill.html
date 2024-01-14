@@ -1,5 +1,5 @@
 {% extends 'layout/employee_layout.html' %}
-{% block title %} Bác sĩ {% endblock %}
+{% block title %} Thu ngân {% endblock %}
 
 {% block sidenav %}
 <div class="side-nav">
@@ -26,7 +26,7 @@
         </div>
 {% endblock %}
 {% block content %}
-<form action="/doctor/create_checkup" method="post">
+<form action="{{ url_for('create_bill', user_id=user.id) }}" method="post">
     <div class="main-content">
             <div class="card">
               <div class="card-body">
@@ -44,21 +44,23 @@
                 <div class="form-row">
                     <div class="form-group col-md-5">
                         <label for="symptoms">Tiền khám</label>
-                        <input type="text" class="form-control" id="symptoms" name="symptoms" value="100000">
+                        <input type="text" class="form-control" id="symptoms" name="checkupFees" value="100000">
                     </div>
                     <div class="form-group col-md-6">
+                        {% if user_medicine_fees %}
                         <label for="predict">Tiền thuốc</label>
-                        <input type="text" class="form-control" id="predict" name="predict">
+                        <input type="text" class="form-control" id="predict" name="medicineFees" value="{{total_medicine_fees}}">
+                        {% endif %}
                     </div>
 
                 </div>
                 <div class="form-group col-md-6">
-                        <label for="patientName">Tổng tiền</label>
-                        <input type="text" class="form-control" id="total" name="total" value="">
+                        <label for="total_fees">Tổng tiền</label>
+                        <input type="text" class="form-control" id="total_fees" name="total" value="">
                 </div>
               </div>
                 <div>
-                      <button type="submit" class="btn btn-primary">Tạo phiếu khám</button>
+                      <button type="submit" class="btn btn-primary">Tạo hóa đơn</button>
                   </div>
             </div>
     </div>
