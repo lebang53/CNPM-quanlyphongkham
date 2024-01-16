@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask_login import login_user, logout_user, login_required
 from phongkham_app import app, dao, login
 from flask import render_template, request, redirect, url_for, session
@@ -165,7 +167,7 @@ def nurse_create_appointment():
 def save_list():
     patients = dao.get_patients_list()
     dao.save_schedule(patients=patients)
-    return redirect('/create_schedule')
+    return redirect(url_for('nurse'))
 
 
 @app.route('/nurse/see_schedule')
@@ -259,43 +261,48 @@ def diagnosis_history(user_id):
 @app.route('/cashier')
 def cashier():
     if current_user.is_authenticated and current_user.user_role.name == 'CASHIER':
-        schedules = dao.get_schedules_list()
-        return render_template('cashier/checkout.html', schedules=schedules)
+        prescriptions = dao.get_prescriptions_list()
+        return render_template('cashier/checkout.html', prescriptions=prescriptions)
     return redirect(url_for('error_page'))
 
 
-@app.route('/cashier/list_checkout/<int:schedule_id>')
-def list_checkout(schedule_id):
-    if current_user.is_authenticated and current_user.user_role.name == 'CASHIER':
-        appointments = dao.get_appointments_by_schedule_id(schedule_id=schedule_id)
-        return render_template('cashier/list_checkout.html', appointments=appointments)
+# @app.route('/cashier/list_checkout/<int:schedule_id>')
+# def list_checkout(schedule_id):
+#     if current_user.is_authenticated and current_user.user_role.name == 'CASHIER':
+#         appointments = dao.get_appointments_by_schedule_id(schedule_id=schedule_id)
+#         return render_template('cashier/list_checkout.html', appointments=appointments)
+#
+#     return redirect(url_for('error_page'))
+#
+#
+# @app.route('/cashier/list_checkout/list_prescription/<int:user_id>')
+# def list_prescription(user_id):
+#     if current_user.is_authenticated and current_user.user_role == UserRoleEnum.CASHIER:
+#         user_instance = User.query.get(user_id)
+#         prescriptions = user_instance.get_prescriptions()
+#
+#         return render_template('cashier/list_prescription.html', prescriptions=prescriptions)
+#
+#     return redirect(url_for('error_page'))
 
-    return redirect(url_for('error_page'))
 
-
-@app.route('/cashier/list_checkout/list_prescription/<int:user_id>')
-def list_prescription(user_id):
-    if current_user.is_authenticated and current_user.user_role == UserRoleEnum.CASHIER:
-        user_instance = User.query.get(user_id)
-        prescriptions = user_instance.get_prescriptions()
-
-        return render_template('cashier/list_prescription.html', prescriptions=prescriptions)
-
-    return redirect(url_for('error_page'))
-
-
-@app.route('/cashier/list_checkout/create_bill/<int:user_id>', methods=['GET', 'POST'])
-def create_bill(user_id):
+@app.route('/cashier/create_bill/<int:prescription_id>', methods=['GET', 'POST'])
+def create_bill(prescription_id):
     if current_user.is_authenticated and current_user.user_role.name == 'CASHIER':
         if request.method == 'POST':
             checkup_date = request.form['checkupDate']
             checkup_fees = request.form['checkupFees']
-            medicine_fees = dao.calculate_total_medicine_fees(user_id=user_id)
+            medicine_fees = dao.calculate_prescription_cost(prescription_id=prescription_id)
 
-            dao.save_receipt(checkup_date=checkup_date, checkup_fees=checkup_fees, medicine_fees=medicine_fees)
-        user = dao.get_user_by_id(user_id)
-        user_medicine_fees = dao.calculate_total_medicine_fees(user_id=user_id)
-        return render_template('cashier/create_bill.html', user=user, user_medicine_fees=user_medicine_fees)
+            new_receipt = dao.save_receipt(checkup_date=checkup_date, checkup_fees=checkup_fees, medicine_fees=medicine_fees)
+            if new_receipt:
+                receipt = new_receipt.id
+                dao.save_prescription(receipt=receipt, prescription_id=prescription_id)
+
+        prescriptions = dao.get_prescriptions_id(prescription_id)
+        total_cost = dao.calculate_prescription_cost(prescription_id=prescription_id)
+        current_date = datetime.today().strftime('%Y-%m-%d')
+        return render_template('cashier/create_bill.html', prescriptions=prescriptions,total_cost=total_cost,current_date=current_date)
 
     return redirect(url_for('error_page'))
 

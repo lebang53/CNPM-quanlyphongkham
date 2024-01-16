@@ -30,24 +30,35 @@
           <div class="main-content">
             <div class="card">
               <div class="card-body">
-                <h4>Lịch khám bệnh</h4>
+                <h4>Đơn thuốc hiện có</h4>
                 <div class="m-t-25">
                   <table id="dataTable" class="table">
                     <thead>
                       <tr>
                         <th>Id</th>
-                        <th>Ngày khám bệnh</th>
+                        <th>Tình trạng thanh toán</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {% if schedules %}
-                      {% for s in schedules %}
+                      {% if prescriptions %}
+                      {% for p in prescriptions %}
                         <tr>
-                          <td>{{ s.id }}</td>
-                          <td>{{ s.appointment_date }}</td>
+                          <td>{{ p.id }}</td>
+
+                          {% if p.receipt is none %}
+                          <td>Chưa thanh toán</td>
+                          {% else %}
+                          <td>Đã thanh toán</td>
+                          {% endif %}
+
+                          {% if p.receipt is none %}
                           <td>
-                            <a href="{{ url_for('list_checkout', schedule_id=s.id) }}">Xem lịch</a>
+                            <a href="{{ url_for('create_bill', prescription_id=p.id)}}">Tạo hóa đơn</a>
                           </td>
+                          {% else %}
+                          <td>
+                          </td>
+                          {% endif %}
                         </tr>
                       {% endfor %}
                       {% endif %}
@@ -55,7 +66,7 @@
                     <tfoot>
                       <tr>
                         <th>Id</th>
-                        <th>Ngày khám bệnh</th>
+                        <th>Tình trạng thanh toán</th>
                       </tr>
                     </tfoot>
                   </table>

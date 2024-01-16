@@ -32,7 +32,7 @@
         </div>
 {% endblock %}
 {% block content %}
-<form action="/nurse/create_appointment" method="post">
+<form action="{{url_for('nurse_create_appointment')}}" method="post">
     <div class="main-content">
             <div class="card">
               <div class="card-body">

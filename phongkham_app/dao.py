@@ -153,11 +153,13 @@ def save_prescription_details(dose, usage, checkup, medicine_id, prescription):
     return
 
 
-def save_prescription():
-    prescription = Prescription()
-    db.session.add(prescription)
-    db.session.commit()
-    return
+def save_prescription(prescription_id, receipt):
+    prescription = Prescription.query.filter_by(id=prescription_id).first()
+    if prescription:
+        prescription.receipt = receipt
+        db.session.commit()
+
+    return prescription
 
 
 def get_checkup_by_user_id(user_id):
@@ -172,16 +174,7 @@ def save_receipt(checkup_date, checkup_fees, medicine_fees):
     receipt = Receipt(checkup_date=checkup_date, checkup_fees=checkup_fees, medicine_fees=medicine_fees)
     db.session.add(receipt)
     db.session.commit()
-    return
-
-
-# def calculate_total_medicine_fees(user_id):
-#     total_medicine_fees = db.session.query(func.sum(Medicine.price).label('total_fees'))\
-#         .join(PrescriptionDetails, Medicine.id == PrescriptionDetails.medicine_id)\
-#         .join(Checkup, PrescriptionDetails.checkup == Checkup.id)\
-#         .filter(Checkup.checkup_user == user_id).scalar()
-#
-#     return total_medicine_fees or 0.0
+    return receipt
 
 
 def get_prescriptions_by_user_id(user_id):
@@ -194,8 +187,51 @@ def get_prescriptions_by_user_id(user_id):
     return prescriptions
 
 
+def get_prescriptions_list():
+    prescriptions = Prescription.query
+    return prescriptions.all()
+
+
+def get_prescriptions_id(prescription_id):
+    prescription = Prescription.query.filter_by(id=prescription_id).first()
+    return prescription
+
+
+def calculate_prescription_cost(prescription_id):
+    # Bước 1: Xác định đối tượng Prescription có prescription_id tương ứng
+    prescription = Prescription.query.filter_by(id=prescription_id).first()
+
+    if not prescription:
+        return None  # Hoặc xử lý lỗi khác tùy thuộc vào yêu cầu của bạn
+
+    # Bước 2: Lấy danh sách chi tiết đơn thuốc liên quan đến prescription
+    prescription_details = (
+        PrescriptionDetails.query
+        .filter_by(prescription=prescription.id)
+        .all()
+    )
+
+    # Bước 3: Duyệt qua danh sách chi tiết đơn thuốc và tải thông tin thuốc
+    total_cost = 0.0
+    for prescription_detail in prescription_details:
+        # Tải thông tin về thuốc từ bảng Medicine
+        medicine = Medicine.query.filter_by(id=prescription_detail.medicine_id).first()
+
+        if medicine:
+            # Kiểm tra và chuyển đổi dose thành kiểu số
+            try:
+                dose_value = float(prescription_detail.dose)
+            except ValueError:
+                # Xử lý lỗi nếu dose không thể chuyển đổi thành số
+                continue
+
+            # Tính tổng tiền cho từng loại thuốc
+            medicine_cost = medicine.price * dose_value
+            total_cost += medicine_cost
+
+    return total_cost
+
+
 if __name__ == "__main__":
     with app.app_context():
-        a = Appointment(patient_name="Phan", sex="Female", birth_date=date(1945, 11, 5))
-        db.session.add(a)
         db.session.commit()

@@ -1,6 +1,8 @@
 {% extends 'layout/employee_layout.html' %}
 {% block title %} Thu ngân {% endblock %}
+{% block script %}
 
+{% endblock %}
 {% block sidenav %}
 <div class="side-nav">
           <div class="side-nav-inner">
@@ -26,7 +28,7 @@
         </div>
 {% endblock %}
 {% block content %}
-<form action="{{ url_for('create_bill', user_id=user.id) }}" method="post">
+<form action="{{ url_for('create_bill',prescription_id=prescriptions.id) }}" method="post">
     <div class="main-content">
             <div class="card">
               <div class="card-body">
@@ -39,7 +41,7 @@
                   {% endif %}
                 <div class="form-group col-md-6">
                     <label for="checkupDate">Ngày khám</label>
-                    <input type="date" class="form-control" id="checkupDate" name="checkupDate" placeholder="Nhập ngày khám">
+                    <input type="date" class="form-control" id="checkupDate" name="checkupDate" value="{{ current_date }}">
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-5">
@@ -47,17 +49,28 @@
                         <input type="text" class="form-control" id="symptoms" name="checkupFees" value="100000">
                     </div>
                     <div class="form-group col-md-6">
-                        {% if user_medicine_fees %}
                         <label for="predict">Tiền thuốc</label>
-                        <input type="text" class="form-control" id="predict" name="medicineFees" value="{{total_medicine_fees}}">
-                        {% endif %}
+                        <input type="text" class="form-control" id="predict" name="medicineFees" value="{{total_cost|int}}">
                     </div>
 
                 </div>
                 <div class="form-group col-md-6">
-                        <label for="total_fees">Tổng tiền</label>
-                        <input type="text" class="form-control" id="total_fees" name="total" value="">
+                        <label for="total_fees" class="text-danger">Tổng tiền</label>
+                        <input type="text" class="form-control text-danger" id="total_fees" name="total" value="">
                 </div>
+                  <script>
+                        function updateTotal() {
+                            var checkupFees = parseInt(document.getElementById('symptoms').value) || 0;
+                            var medicineFees = parseInt(document.getElementById('predict').value) || 0;
+
+                            var totalFees = checkupFees + medicineFees;
+                            document.getElementById('total_fees').value = totalFees;
+                        }
+
+                        document.addEventListener("DOMContentLoaded", updateTotal);
+                        document.getElementById('symptoms').addEventListener("input", updateTotal);
+                        document.getElementById('predict').addEventListener("input", updateTotal);
+                    </script>
               </div>
                 <div>
                       <button type="submit" class="btn btn-primary">Tạo hóa đơn</button>

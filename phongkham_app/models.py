@@ -26,6 +26,8 @@ class User(BaseModel, UserMixin):
     name = Column(String(50), nullable=False)
     user_role = Column(Enum(UserRoleEnum), default=UserRoleEnum.PATIENT)
     active = Column(Boolean, default=True)
+    address = Column(String(50), nullable=True)
+    phone = Column(String(11), nullable=True)
     checkups = relationship('Checkup', backref='user_checkup', lazy=True)
     appointment = relationship('Appointment', backref='user_appointment', lazy=True)
 
@@ -96,12 +98,17 @@ class Prescription(BaseModel):
     checkup = relationship('Checkup', backref='prescription_checkup', lazy=True)
     receipt = Column(Integer, ForeignKey("receipt.id"))
 
-
     @classmethod
-    def create_prescription(cls):
+    def create_prescription(cls, receipt_id=None):
         new_prescription = cls()
+
+        # Thêm logic để gán receipt_id nếu được truyền vào
+        if receipt_id is not None:
+            new_prescription.receipt = receipt_id
+
         db.session.add(new_prescription)
         db.session.commit()
+
         return new_prescription
 
 
@@ -115,13 +122,5 @@ class PrescriptionDetails(BaseModel):
 
 if __name__ == "__main__":
     with app.app_context():
-
-        # medicineCat1 = MedicineCategory(name="Aspirine")
-        # medicineCat2 = MedicineCategory(name="Joint")
-
-        # medicine1 = Medicine(name="Paracetamol", unit="pill", price=30000, in_stock=True, exp_date=date(1945, 11,
-        # 3), category_id=1) db.session.add(medicineCat1) db.session.add(medicineCat2) db.session.add(medicine1)
-        # db.session.commit()
-
         # db.create_all()
         db.session.commit()
